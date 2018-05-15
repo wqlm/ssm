@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+这是SpringMVC的配置文件，作用范围为某个DispatcherServlet
+(注意我说的是SpringMVC，不是Spring)
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/mvc
+       http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- 开启注解 -->
+    <mvc:annotation-driven>
+        <!--将直接返回给前端的对象转换成json-->
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter"/>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--自动扫描-->
+    <context:component-scan base-package="com.wqlm.ssm"/>
+
+
+
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++配置freemarker+++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!-- freemarker全局配置 -->
+    <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+        <property name="templateLoaderPath" value="/WEB-INF/ftl/" />
+        <property name="freemarkerSettings">
+            <props>
+                <prop key="defaultEncoding">UTF-8</prop>
+                <!--模板更新延迟-->
+                <prop key="template_update_delay">0</prop>
+                <!-- 格式化 -->
+                <prop key="datetime_format">yyyy-MM-dd HH:mm:ss</prop>
+                <prop key="date_format">yyyy-MM-dd</prop>
+                <prop key="time_format">HH:mm:ss</prop>
+                <prop key="number_format">#.##</prop>
+                <!--模板异常处理程序-->
+                <prop key="template_exception_handler">ignore</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- 配置freeMarker视图解析器 -->
+    <bean id="freeMarkerViewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+        <property name="prefix" value="/WEB-INF/ftl/"/>
+        <property name="suffix" value=".ftl"/>
+        <property name="contentType" value="text/html;charset=UTF-8" />
+        <!-- 设置requestContext变量的名称 -->
+        <property name="requestContextAttribute" value="request" />
+        <!-- 配置是否在生成模板内容之前把HTTPsession中的数据放入model中 -->
+        <property name="exposeSessionAttributes" value="true" />
+        <!-- 配置是否在生成模板内容之前把HTTPrequest中的数据放入model中 -->
+        <property name="exposeRequestAttributes" value="true" />
+        <!-- 使用spring lib时 是否暴露 RequestContext 变量 默认为true -->
+        <property name="exposeSpringMacroHelpers" value="true" />
+    </bean>
+    <!--++++++++++++++++++++++++++++++++++++++++++++++++配置freemarker+++++++++++++++++++++++++++++++++++++++++++++++-->
+
+    <!--
+    &lt;!&ndash;避免IE执行AJAX时，返回JSON出现下载文件 &ndash;&gt;
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>text/html;charset=UTF-8</value>
+            </list>
+        </property>
+    </bean>
+
+
+    &lt;!&ndash; 启动SpringMVC的注解功能，完成请求和注解POJO的映射 &ndash;&gt;
+    <bean
+            class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJacksonHttpMessageConverter" /> &lt;!&ndash; JSON转换器 &ndash;&gt;
+            </list>
+        </property>
+    </bean>
+    -->
+
+    <!--
+    &lt;!&ndash; 配置文件上传，如果没有使用文件上传可以不用配置，当然如果不配，那么配置文件中也不必引入上传组件包 &ndash;&gt;
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        &lt;!&ndash; 默认编码 &ndash;&gt;
+        <property name="defaultEncoding" value="utf-8" />
+        &lt;!&ndash; 文件大小最大值 &ndash;&gt;
+        <property name="maxUploadSize" value="10485760000" />
+        &lt;!&ndash; 内存中的最大值 &ndash;&gt;
+        <property name="maxInMemorySize" value="40960" />
+        &lt;!&ndash; 启用是为了推迟文件解析，以便捕获文件大小异常 &ndash;&gt;
+        <property name="resolveLazily" value="true"/>
+    </bean>
+    -->
+</beans>
